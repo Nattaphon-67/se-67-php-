@@ -6,18 +6,26 @@ services:
       - ./mariadb/initdb/:/docker-entrypoint-initdb.d
       - ./mariadb/data/:/var/lib/mysql/
     environment:
-      - MYSQL_ROOT_PASSWORD=1234
-      - MYSQL_DATABASE=sample_db
-      - MYSQL_USER=admin
-      - MYSQL_PASSWORD=1234
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_DATABASE: "titanic"
+      MYSQL_USER: "admin"
+      MYSQL_PASSWORD: "1234"
     restart: always
-    # restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 20s
     networks:
-      - web_network
+      - web_network_se
+
   php:
     depends_on:
-      - db
-    build: php/
+      db:
+        condition: service_healthy
+        required: true
+    build: ./php
     container_name: lemp_php
     volumes:
       - ./public_html/:/var/www/html
@@ -25,20 +33,24 @@ services:
       - "9000"
     restart: always
     networks:
-      - web_network
+      - web_network_se
+
   nginx:
     image: nginx:stable-alpine
     container_name: lemp_nginx
+    depends_on:
+      - php
     volumes:
       - ./public_html/:/var/www/html
       - ./nginx/conf/nginx.conf:/etc/nginx/conf/nginx.conf:ro
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
     ports:
-      - "88:80"
+      - "8855:80"
     restart: always
     networks:
-      - web_network
+      - web_network_se
+
 networks:
-  web_network:
+  web_network_se:
     name: lemp
-    
+    driver: bridge

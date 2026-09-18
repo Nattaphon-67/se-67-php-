@@ -1,9 +1,9 @@
 <?php
 // Database Connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "your_database_name";
+$servername = "db";
+$username = "admin";
+$password = "1234";
+$dbname = "titanic";
 
 // Create Connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -11,9 +11,15 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+$conn->set_charset("utf8mb4");
+
 // Fetch Data from 'titanic' Table
 $sql = "SELECT * FROM titanic";
 $result = $conn->query($sql);
+
+if (!$result) {
+    die("Query failed: " . $conn->error);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,7 +35,7 @@ $result = $conn->query($sql);
 <body>
     <div class="container mt-5">
         <h2 class="text-center mb-4">Titanic Passenger Data</h2>
-        <?php if ($result->num_rows > 0): ?>
+        <?php if ($result && $result->num_rows > 0): ?>
             <table class="table table-striped table-bordered">
                 <thead class="table-dark">
                     <tr>
