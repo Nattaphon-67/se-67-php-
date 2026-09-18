@@ -18,7 +18,7 @@ services:
       retries: 10
       start_period: 20s
     networks:
-      - web_network_se
+      - web_network_opera
 
   php:
     depends_on:
@@ -33,7 +33,7 @@ services:
       - "9000"
     restart: always
     networks:
-      - web_network_se
+      - web_network_opera
 
   nginx:
     image: nginx:stable-alpine
@@ -45,12 +45,12 @@ services:
       - ./nginx/conf/nginx.conf:/etc/nginx/conf/nginx.conf:ro
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
     ports:
-      - "8855:80"
+      - "9000:80"
     restart: always
     networks:
-      - web_network_se
+      - web_network_opera
 
 networks:
-  web_network_se:
+  web_network_opera:
     name: lemp
     driver: bridge
