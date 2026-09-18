@@ -1,7 +1,7 @@
 services:
   db:
     image: mariadb:latest
-    container_name: lemp_mariadb
+    container_name: opera_mariadb
     volumes:
       - ./mariadb/initdb/:/docker-entrypoint-initdb.d
       - ./mariadb/data/:/var/lib/mysql/
@@ -26,7 +26,7 @@ services:
         condition: service_healthy
         required: true
     build: ./php
-    container_name: lemp_php
+    container_name: opera_php
     volumes:
       - ./public_html/:/var/www/html
     expose:
@@ -37,7 +37,7 @@ services:
 
   nginx:
     image: nginx:stable-alpine
-    container_name: lemp_nginx
+    container_name: opera_nginx
     depends_on:
       - php
     volumes:
@@ -52,5 +52,5 @@ services:
 
 networks:
   web_network_opera:
-    name: lemp
+    name: web_network_opera
     driver: bridge
